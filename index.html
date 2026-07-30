@@ -40,41 +40,46 @@
     }
   </script>
 
-  <style>
-    /* Baseline state untuk animasi */
-    .animate-chat {
-      opacity: 1;
-    }
+ <style>
+  /* 1. Default untuk semua user (termasuk yang prefer reduced motion):
+        Tampilkan elemen secara normal tanpa animasi sama sekali */
+  .animate-chat {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-    /* Keyframes dan Stagger Delay hanya berlaku jika user TIDAK memilih reduced-motion */
-    @media (prefers-reduced-motion: no-preference) {
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      .animate-chat {
+  /* 2. Hanya aktifkan animasi DAN stagger delay jika user TIDAK meminta reduced motion */
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes fadeInUp {
+      from {
         opacity: 0;
-        animation: fadeInUp 0.4s ease-out forwards;
+        transform: translateY(12px);
       }
-
-      /* Stagger Delay menggunakan Class Selector untuk menjaga Low Specificity */
-      .chat-body > *:nth-child(1) { animation-delay: 0.15s; }
-      .chat-body > *:nth-child(2) { animation-delay: 0.30s; }
-      .chat-body > *:nth-child(3) { animation-delay: 0.45s; }
-      .chat-body > *:nth-child(4) { animation-delay: 0.60s; }
-      .chat-body > *:nth-child(5) { animation-delay: 0.75s; }
-      .chat-body > *:nth-child(6) { animation-delay: 0.90s; }
-      .chat-body > *:nth-child(7) { animation-delay: 1.05s; }
-      .chat-body > *:nth-child(8) { animation-delay: 1.20s; }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-  </style>
+
+    .animate-chat {
+      opacity: 0;
+      animation-name: fadeInUp;
+      animation-duration: 0.4s;
+      animation-timing-function: ease-out;
+      animation-fill-mode: forwards;
+    }
+
+    /* Stagger delay diisolasi di sini agar tidak memicu warning accessibility */
+    .chat-body > *:nth-child(1) { animation-delay: 0.15s; }
+    .chat-body > *:nth-child(2) { animation-delay: 0.30s; }
+    .chat-body > *:nth-child(3) { animation-delay: 0.45s; }
+    .chat-body > *:nth-child(4) { animation-delay: 0.60s; }
+    .chat-body > *:nth-child(5) { animation-delay: 0.75s; }
+    .chat-body > *:nth-child(6) { animation-delay: 0.90s; }
+    .chat-body > *:nth-child(7) { animation-delay: 1.05s; }
+    .chat-body > *:nth-child(8) { animation-delay: 1.20s; }
+  }
+</style>
 </head>
 
 <body class="font-sans bg-app-bg min-h-screen text-[16px] relative overflow-x-hidden flex items-center justify-center py-12 lg:py-0">
