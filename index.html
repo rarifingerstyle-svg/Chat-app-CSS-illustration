@@ -23,6 +23,7 @@
           colors: {
             'sub-heading': 'hsl(276, 100%, 81%)',
             'chat-left': 'hsl(276, 55%, 52%)',
+            'chat-left-bg': 'hsl(270, 20%, 90%)',
             'chat-right': 'hsl(271, 15%, 43%)',
             'placeholder': 'hsl(206, 6%, 79%)',
             'main-heading': 'hsl(271, 36%, 24%)',
@@ -30,6 +31,7 @@
             'grad-light': 'hsl(293, 100%, 63%)',
             'grad-dark': 'hsl(264, 100%, 61%)',
             'app-bg': 'hsl(270, 20%, 96%)',
+            'bg-shape': 'hsl(270, 20%, 92%)',
             'btn-submit': 'hsl(271, 36%, 24%)',
             'radio-border': 'hsl(289, 100%, 72%)',
           }
@@ -39,7 +41,12 @@
   </script>
 
   <style>
-    /* Keyframes & Stagger Animation untuk pengguna normal */
+    /* Baseline state untuk animasi */
+    .animate-chat {
+      opacity: 1;
+    }
+
+    /* Keyframes dan Stagger Delay hanya berlaku jika user TIDAK memilih reduced-motion */
     @media (prefers-reduced-motion: no-preference) {
       @keyframes fadeInUp {
         from {
@@ -57,32 +64,24 @@
         animation: fadeInUp 0.4s ease-out forwards;
       }
 
-      /* CSS Stagger Delay tanpa Inline Style */
-      #chat-body > *:nth-child(1) { animation-delay: 0.15s; }
-      #chat-body > *:nth-child(2) { animation-delay: 0.30s; }
-      #chat-body > *:nth-child(3) { animation-delay: 0.45s; }
-      #chat-body > *:nth-child(4) { animation-delay: 0.60s; }
-      #chat-body > *:nth-child(5) { animation-delay: 0.75s; }
-      #chat-body > *:nth-child(6) { animation-delay: 0.90s; }
-      #chat-body > *:nth-child(7) { animation-delay: 1.05s; }
-      #chat-body > *:nth-child(8) { animation-delay: 1.20s; }
-    }
-
-    /* Fallback Accessibility untuk pengguna prefer-reduced-motion */
-    @media (prefers-reduced-motion: reduce) {
-      .animate-chat {
-        opacity: 1 !important;
-        animation: none !important;
-      }
+      /* Stagger Delay menggunakan Class Selector untuk menjaga Low Specificity */
+      .chat-body > *:nth-child(1) { animation-delay: 0.15s; }
+      .chat-body > *:nth-child(2) { animation-delay: 0.30s; }
+      .chat-body > *:nth-child(3) { animation-delay: 0.45s; }
+      .chat-body > *:nth-child(4) { animation-delay: 0.60s; }
+      .chat-body > *:nth-child(5) { animation-delay: 0.75s; }
+      .chat-body > *:nth-child(6) { animation-delay: 0.90s; }
+      .chat-body > *:nth-child(7) { animation-delay: 1.05s; }
+      .chat-body > *:nth-child(8) { animation-delay: 1.20s; }
     }
   </style>
 </head>
 
-<body class="font-sans bg-[hsl(270,20%,96%)] min-h-screen text-[16px] relative overflow-x-hidden flex items-center justify-center py-12 lg:py-0">
+<body class="font-sans bg-app-bg min-h-screen text-[16px] relative overflow-x-hidden flex items-center justify-center py-12 lg:py-0">
 
   <!-- Background Decorative Shapes -->
   <div class="fixed -top-40 -left-40 lg:-top-20 lg:-left-12 w-[340px] h-[580px] lg:w-[500px] lg:h-[700px] bg-gradient-to-b from-grad-light to-grad-dark rounded-b-full rounded-t-full -z-10 shadow-lg" aria-hidden="true"></div>
-  <div class="fixed -bottom-40 -right-40 lg:-bottom-20 lg:-right-12 w-[340px] h-[580px] lg:w-[500px] lg:h-[700px] bg-[hsl(270,20%,92%)]/60 rounded-t-full rounded-b-full -z-10" aria-hidden="true"></div>
+  <div class="fixed -bottom-40 -right-40 lg:-bottom-20 lg:-right-12 w-[340px] h-[580px] lg:w-[500px] lg:h-[700px] bg-bg-shape/60 rounded-t-full rounded-b-full -z-10" aria-hidden="true"></div>
 
   <!-- Main Container -->
   <main class="container mx-auto px-6 max-w-5xl flex flex-col lg:flex-row items-center justify-center lg:justify-between gap-12 lg:gap-16 my-auto">
@@ -100,10 +99,12 @@
           <!-- Chat Header -->
           <div class="bg-gradient-to-r from-grad-dark to-grad-light pt-7 pb-3 px-3 flex items-center justify-between text-white rounded-b-md shadow-md z-10">
             <div class="flex items-center gap-2">
-              <!-- Back Arrow Icon -->
-              <svg class="w-3 h-3 stroke-white stroke-[3] cursor-pointer" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-              </svg>
+              <!-- Back Arrow Button -->
+              <button type="button" aria-label="Go back" class="focus:outline-none">
+                <svg class="w-3 h-3 stroke-white stroke-[3]" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+              </button>
               
               <!-- Avatar -->
               <img src="./images/avatar.jpg" alt="Samuel Green profile picture" class="w-6 h-6 rounded-full border border-white/80 object-cover">
@@ -115,24 +116,26 @@
               </div>
             </div>
 
-            <!-- Options Three Dots -->
-            <svg class="w-3 h-3 fill-white/80 cursor-pointer" viewBox="0 0 24 24" aria-label="More options">
-              <circle cx="12" cy="5" r="2.5"/>
-              <circle cx="12" cy="12" r="2.5"/>
-              <circle cx="12" cy="19" r="2.5"/>
-            </svg>
+            <!-- Options Button (A11y Fix) -->
+            <button type="button" aria-label="More options" class="focus:outline-none">
+              <svg class="w-3 h-3 fill-white/80" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="5" r="2.5"/>
+                <circle cx="12" cy="12" r="2.5"/>
+                <circle cx="12" cy="19" r="2.5"/>
+              </svg>
+            </button>
           </div>
 
-          <!-- Chat Messages Area -->
-          <div id="chat-body" class="p-2.5 flex flex-col gap-2 text-[8px] overflow-y-auto grow">
+          <!-- Chat Messages Area (Class-based specificity fix) -->
+          <div class="chat-body p-2.5 flex flex-col gap-2 text-[8px] overflow-y-auto grow">
             
             <!-- Left Message 1 -->
-            <div class="animate-chat bg-[hsl(270,20%,90%)] text-chat-left p-2 rounded-lg rounded-bl-xs max-w-[68%] leading-normal">
+            <div class="animate-chat bg-chat-left-bg text-chat-left p-2 rounded-lg rounded-bl-xs max-w-[68%] leading-normal">
               That sounds great. I'd be happy with that.
             </div>
 
             <!-- Left Message 2 -->
-            <div class="animate-chat bg-[hsl(270,20%,90%)] text-chat-left p-2 rounded-lg rounded-bl-xs max-w-[68%] leading-normal">
+            <div class="animate-chat bg-chat-left-bg text-chat-left p-2 rounded-lg rounded-bl-xs max-w-[68%] leading-normal">
               Could you send over some pictures of your dog, please?
             </div>
 
@@ -154,7 +157,7 @@
             </div>
 
             <!-- Left Message 3 -->
-            <div class="animate-chat bg-[hsl(270,20%,90%)] text-chat-left p-2 rounded-lg rounded-bl-xs max-w-[68%] leading-normal">
+            <div class="animate-chat bg-chat-left-bg text-chat-left p-2 rounded-lg rounded-bl-xs max-w-[68%] leading-normal">
               She looks so happy! The time we discussed works. How long shall I take her out for?
             </div>
 
@@ -218,6 +221,6 @@
   </main>
 
   <!-- JavaScript Interaksi Pesan Baru -->
-<script src="js/script.js"></script> 
+<script src="j/script.js"></script>
 </body>
 </html>
