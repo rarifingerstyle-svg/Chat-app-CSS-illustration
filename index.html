@@ -40,14 +40,14 @@
     }
   </script>
 
- <style>
-  /* 1. Tampilan default (aman untuk reduced-motion) */
+<style>
+  /* 1. Base state (Aman dari motion sickness secara default) */
   .animate-chat {
     opacity: 1;
     transform: translateY(0);
   }
 
-  /* 2. Jalankan animasi HANYA jika pengguna menyukai efek gerak (no-preference) */
+  /* 2. Animasi & Stagger Delay HANYA aktif jika pengguna mengizinkan efek gerak */
   @media (prefers-reduced-motion: no-preference) {
     @keyframes fadeInUp {
       from {
@@ -68,7 +68,6 @@
       animation-fill-mode: forwards;
     }
 
-    /* Stagger Delay */
     .chat-body > *:nth-child(1) { animation-delay: 0.15s; }
     .chat-body > *:nth-child(2) { animation-delay: 0.30s; }
     .chat-body > *:nth-child(3) { animation-delay: 0.45s; }
@@ -79,13 +78,18 @@
     .chat-body > *:nth-child(8) { animation-delay: 1.20s; }
   }
 
-  /* 3. Deklarasi EKSPLISIT untuk pengguna yang memilih Reduced Motion (Mematikan Linter Warning) */
+  /* 3. Pembatalan Eksplisit untuk Reduced Motion (Menghilangkan 8 Warning animation-delay) */
   @media (prefers-reduced-motion: reduce) {
     .animate-chat {
       opacity: 1;
       transform: none;
       animation-name: none;
       animation-duration: 0s;
+      animation-delay: 0s;
+    }
+
+    /* Mematikan stagger delay di tiap elemen secara spesifik */
+    .chat-body > * {
       animation-delay: 0s;
     }
   }
